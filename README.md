@@ -3,7 +3,7 @@
 ## Installing
 
 ```
-go get github.com/himidori/golang-vk-api
+go get github.com/romanraspopov/golang-vk-api
 ```
 
 ## Authorizing using username and password
