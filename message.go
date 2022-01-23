@@ -113,14 +113,14 @@ type LinkAttachment struct {
 }
 
 type Keyboard struct {
-	OneTime 	bool		`json:"one_time"`
-	Buttons		[][]Button 	`json:"buttons"`
-	Inline		bool 		`json:"inline"`
+	OneTime bool       `json:"one_time"`
+	Buttons [][]Button `json:"buttons"`
+	Inline  bool       `json:"inline"`
 }
 
 type Button struct {
-	Action		map[string]string	`json:"action"`
-	Color		string				`json:"color,omitempty"`
+	Action map[string]string `json:"action"`
+	Color  string            `json:"color,omitempty"`
 }
 
 func (client *VKClient) DialogsGet(count int, params url.Values) (*Dialog, error) {
@@ -198,6 +198,8 @@ func (client *VKClient) MessagesGetByID(message_ids []int, params url.Values) (i
 	return message.Count, message.Messages, nil
 }
 
+// MessagesSend отправляет сообщение "message" адресату "peerOrDomain",
+// заданному в ВК номером id или коротким именем
 func (client *VKClient) MessagesSend(peerOrDomain interface{}, message string, params url.Values) (APIResponse, error) {
 	if params == nil {
 		params = url.Values{}
@@ -205,9 +207,9 @@ func (client *VKClient) MessagesSend(peerOrDomain interface{}, message string, p
 	params.Add("message", message)
 
 	switch peerOrDomain.(type) {
-	case int:
+	case int: // для адресата сообщения, указанного номером id
 		params.Add("peer_id", strconv.Itoa(peerOrDomain.(int)))
-	case string:
+	case string: // для адресата сообщения, указанного коротким именем в ВК
 		params.Add("domain", peerOrDomain.(string))
 	}
 
