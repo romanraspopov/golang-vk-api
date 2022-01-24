@@ -7,6 +7,8 @@ import (
 	"strconv"
 )
 
+// Методы для работы с записями на стене
+
 type Wall struct {
 	Count    int         `json:"count"`
 	Posts    []*WallPost `json:"items"`

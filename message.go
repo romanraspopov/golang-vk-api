@@ -2,10 +2,15 @@ package vkapi
 
 import (
 	"encoding/json"
+	"math/rand"
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
+
+// Методы для работы с личными сообщениями.
+// Для моментального получения входящих сообщений используйте LongPoll сервер.
 
 const (
 	ActivityTypeTyping   = "typing"
@@ -201,6 +206,7 @@ func (client *VKClient) MessagesGetByID(message_ids []int, params url.Values) (i
 // MessagesSend отправляет сообщение "message" адресату "peerOrDomain",
 // заданному в ВК номером id или коротким именем
 func (client *VKClient) MessagesSend(peerOrDomain interface{}, message string, params url.Values) (APIResponse, error) {
+	rand.Seed(time.Now().UnixNano())
 	if params == nil {
 		params = url.Values{}
 	}
@@ -212,6 +218,8 @@ func (client *VKClient) MessagesSend(peerOrDomain interface{}, message string, p
 	case string: // для адресата сообщения, указанного коротким именем в ВК
 		params.Add("domain", peerOrDomain.(string))
 	}
+
+	params.Add("random_id", strconv.Itoa(int(rand.Int31())))
 
 	resp, err := client.MakeRequest("messages.send", params)
 	if err != nil {

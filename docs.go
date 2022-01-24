@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+// Методы для работы с документами
+
 type DocAttachment struct {
 	ID         int    `json:"id"`
 	OwnerID    int    `json:"owner_id"`

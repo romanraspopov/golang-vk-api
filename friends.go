@@ -6,6 +6,8 @@ import (
 	"strconv"
 )
 
+// Методы для работы с друзьями
+
 type FriendsRequests struct {
 	Count    int        `json:"count"`
 	Requests []*Request `json:"items"`

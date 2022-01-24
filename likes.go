@@ -6,6 +6,8 @@ import (
 	"strconv"
 )
 
+// Методы для работы с отметками "Мне нравится"
+
 const (
 	TypePost         = "post"
 	TypeComment      = "comment"
