@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+// Вспомогательные функции (утилиты)
+
 type ResolveScreenName struct {
 	Type     string `json:"type"`
 	ObjectID int    `json:"object_id"`
