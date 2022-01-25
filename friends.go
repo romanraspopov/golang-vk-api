@@ -28,6 +28,14 @@ type Mutual struct {
 	Users []int `json:"users"`
 }
 
+type FriendDeleteResult struct {
+	Success             int `json:"success"`             // удалось успешно удалить друга;
+	Friend_deleted      int `json:"friend_deleted"`      // был удален друг;
+	Out_request_deleted int `json:"out_request_deleted"` // отменена исходящая заявка;
+	In_request_deleted  int `json:"in_request_deleted"`  // отклонена входящая заявка;
+	Suggestion_deleted  int `json:"suggestion_deleted"`  // отклонена рекомендация друга.
+}
+
 func (client *VKClient) FriendsGet(uid int, count int) (int, []*User, error) {
 	params := url.Values{}
 	params.Set("user_id", strconv.Itoa(uid))
@@ -60,7 +68,16 @@ func (client *VKClient) FriendsGetRequests(count int, out int) (int, []*Request,
 	return reqs.Count, reqs.Requests, nil
 }
 
-func (client *VKClient) FriendsAdd(userID int, text string, follow int) error {
+// FriendsAdd - одобряет или создаёт заявку на добавление в друзья.
+// user_id (positive) - Идентификатор пользователя, которому необходимо отправить заявку, либо заявку от которого необходимо одобрить.
+// text (string) - Текст сопроводительного сообщения для заявки на добавление в друзья. Максимальная длина сообщения — 500 символов.
+// follow (checkbox) = 1, если необходимо отклонить входящую заявку (оставить пользователя в подписчиках).
+//
+// После успешного выполнения возвращает одно из следующих значений:
+// 1 - заявка на добавление данного пользователя в друзья отправлена;
+// 2 - заявка на добавление в друзья от данного пользователя одобрена;
+// 4 - повторная отправка заявки.
+func (client *VKClient) FriendsAdd(userID int, text string, follow int) (int, error) {
 	params := url.Values{}
 	params.Set("user_id", strconv.Itoa(userID))
 	params.Set("follow", strconv.Itoa(follow))
@@ -68,22 +85,36 @@ func (client *VKClient) FriendsAdd(userID int, text string, follow int) error {
 		params.Set("text", text)
 	}
 
-	_, err := client.MakeRequest("friends.add", params)
+	resp, err := client.MakeRequest("friends.add", params)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	var result int
+	json.Unmarshal(resp.Response, &result)
+
+	return result, nil
 }
 
-func (client *VKClient) FriendsDelete(userID int) error {
+// FriendsDelete - удаляет пользователя из списка друзей или отклоняет заявку в друзья.
+// user_id (positive) - Идентификатор пользователя, которого необходимо удалить из списка друзей, либо заявку от которого необходимо отклонить.
+// Результат - возвращается объект с полями (типа "success":1):
+// success - удалось успешно удалить друга;
+// friend_deleted - был удален друг;
+// out_request_deleted - отменена исходящая заявка;
+// in_request_deleted - отклонена входящая заявка;
+// suggestion_deleted - отклонена рекомендация друга.
+func (client *VKClient) FriendsDelete(userID int) (bool, error) {
 	params := url.Values{}
 	params.Set("user_id", strconv.Itoa(userID))
 
-	_, err := client.MakeRequest("friends.delete", params)
+	resp, err := client.MakeRequest("friends.delete", params)
 	if err != nil {
-		return err
+		return false, err
 	}
 
-	return nil
+	var result FriendDeleteResult
+	json.Unmarshal(resp.Response, &result)
+
+	return IntToBool(result.Success), nil
 }
