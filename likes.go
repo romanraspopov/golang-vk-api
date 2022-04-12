@@ -34,6 +34,11 @@ type LikeUser struct {
 	LastName  string `json:"last_name"`
 }
 
+// LikesGet получает список идентификаторов пользователей,
+// которые добавили заданный объект в свой список «Мне нравится».
+//
+// Обратите внимание, данные о репостах доступны только для записей,
+// созданных текущим пользователем или сообществом, в котором он является администратором.
 func (client *VKClient) LikesGet(itemType string, ownerID int, itemID int, count int, params url.Values) (int, []*LikeUser, error) {
 	if params == nil {
 		params = url.Values{}

@@ -284,9 +284,9 @@ func (client *VKClient) MakeRequest(method string, params url.Values) (APIRespon
 
 	params.Set("access_token", client.Self.AccessToken)
 	params.Set("v", apiVersion)
-	if client.Self.Lang != "" {
-		params.Set("lang", client.Self.Lang)
-	}
+	// if client.Self.Lang != "" {
+	// 	params.Set("lang", client.Self.Lang)
+	// }
 
 	resp, err := client.Client.PostForm(endpoint, params)
 	if err != nil {
