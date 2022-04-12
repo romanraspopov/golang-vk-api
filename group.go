@@ -36,6 +36,7 @@ type Group struct {
 	CanMessage        int             `json:"can_message"`
 	CanPost           int             `json:"can_post"`
 	CanSeeAllPosts    int             `json:"can_see_all_posts"`
+	City              *UserCity       `json:"city"`
 }
 
 type GroupSearchResult struct {
@@ -88,6 +89,7 @@ func (client *VKClient) GroupGet(userID int, count int) (int, []*Group, error) {
 	params.Set("user_id", strconv.Itoa(userID))
 	params.Set("count", strconv.Itoa(count))
 	params.Set("extended", "1")
+	params.Set("fields", groupFields)
 	resp, err := client.MakeRequest("groups.get", params)
 	if err != nil {
 		return 0, nil, err
