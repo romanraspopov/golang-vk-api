@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+// Методы для работы с фотографиями
+
 type PhotoAttachmentSizes struct {
 	Type   string `json:"type"`
 	Url    string `json:"url"`

@@ -13,10 +13,12 @@ import (
 	"time"
 )
 
+// Методы для авторизации и отправки API-запросов на сервер ВК
+
 const (
 	tokenURL   = "https://oauth.vk.com/token"
 	apiURL     = "https://api.vk.com/method/%s"
-	apiVersion = "5.103"
+	apiVersion = "5.131"
 )
 
 const (
@@ -25,6 +27,7 @@ const (
 	DeviceAndroid
 )
 
+// ratelimiter - ограничитель количества запросов в секунду к серверу ВК
 type ratelimiter struct {
 	MaxRequestsPerSecond int
 	requestsCount        int
@@ -32,6 +35,7 @@ type ratelimiter struct {
 	mux                  sync.Mutex
 }
 
+// VKClient содержит авторизационные данные и настройки коммуникации с сервером ВК
 type VKClient struct {
 	Self   Token
 	Client *http.Client
@@ -39,7 +43,7 @@ type VKClient struct {
 	cb     *callbackHandler
 }
 
-type VKGroupBot struct {
+type VKGroupBot struct { // nameless fields in struct (https://stackoverflow.com/questions/28014591/nameless-fields-in-go-structs)
 	VKClient
 	Group
 	cb *botsCallBackHandler
@@ -219,7 +223,7 @@ func (client *VKClient) auth(device int, user string, password string) (Token, e
 	q.Add("client_secret", clientSecret)
 	q.Add("username", user)
 	q.Add("password", password)
-	q.Add("v", "5.40")
+	q.Add("v", apiVersion)
 	req.URL.RawQuery = q.Encode()
 
 	client.rl.Wait()
@@ -280,9 +284,9 @@ func (client *VKClient) MakeRequest(method string, params url.Values) (APIRespon
 
 	params.Set("access_token", client.Self.AccessToken)
 	params.Set("v", apiVersion)
-	if client.Self.Lang != "" {
-		params.Set("lang", client.Self.Lang)
-	}
+	// if client.Self.Lang != "" {
+	// 	params.Set("lang", client.Self.Lang)
+	// }
 
 	resp, err := client.Client.PostForm(endpoint, params)
 	if err != nil {

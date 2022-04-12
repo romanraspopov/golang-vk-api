@@ -2,10 +2,15 @@ package vkapi
 
 import (
 	"encoding/json"
+	"math/rand"
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
+
+// Методы для работы с личными сообщениями.
+// Для моментального получения входящих сообщений используйте LongPoll сервер.
 
 const (
 	ActivityTypeTyping   = "typing"
@@ -123,6 +128,11 @@ type Button struct {
 	Color  string            `json:"color,omitempty"`
 }
 
+// DialogsGet возвращает список диалогов текущего пользователя или сообщества.
+// Актуальный метод: messages.getConversations.
+//
+// Данный метод устарел и может быть отключён через некоторое время,
+// пожалуйста, избегайте его использования.
 func (client *VKClient) DialogsGet(count int, params url.Values) (*Dialog, error) {
 	if params == nil {
 		params = url.Values{}
@@ -140,6 +150,7 @@ func (client *VKClient) DialogsGet(count int, params url.Values) (*Dialog, error
 	return dialog, nil
 }
 
+// GetHistoryAttachments возвращает материалы диалога или беседы.
 func (client *VKClient) GetHistoryAttachments(peerID int, mediaType string, count int, params url.Values) (*HistoryAttachment, error) {
 	if params == nil {
 		params = url.Values{}
@@ -158,6 +169,10 @@ func (client *VKClient) GetHistoryAttachments(peerID int, mediaType string, coun
 	return att, nil
 }
 
+// MessagesGet возвращает список входящих личных сообщений текущего пользователя или сообщества.
+//
+// Данный метод устарел и может быть отключён через некоторое время,
+// пожалуйста, избегайте его использования.
 func (client *VKClient) MessagesGet(count int, chatID int, isDialog bool, params url.Values) (int, []*DialogMessage, error) {
 	if params == nil {
 		params = url.Values{}
@@ -180,6 +195,7 @@ func (client *VKClient) MessagesGet(count int, chatID int, isDialog bool, params
 	return message.Count, message.Messages, nil
 }
 
+// MessagesGetByID возвращает сообщения по их идентификаторам.
 func (client *VKClient) MessagesGetByID(message_ids []int, params url.Values) (int, []*DialogMessage, error) {
 	if params == nil {
 		params = url.Values{}
@@ -201,6 +217,7 @@ func (client *VKClient) MessagesGetByID(message_ids []int, params url.Values) (i
 // MessagesSend отправляет сообщение "message" адресату "peerOrDomain",
 // заданному в ВК номером id или коротким именем
 func (client *VKClient) MessagesSend(peerOrDomain interface{}, message string, params url.Values) (APIResponse, error) {
+	rand.Seed(time.Now().UnixNano())
 	if params == nil {
 		params = url.Values{}
 	}
@@ -213,6 +230,8 @@ func (client *VKClient) MessagesSend(peerOrDomain interface{}, message string, p
 		params.Add("domain", peerOrDomain.(string))
 	}
 
+	params.Add("random_id", strconv.Itoa(int(rand.Int31())))
+
 	resp, err := client.MakeRequest("messages.send", params)
 	if err != nil {
 		return resp, err
@@ -221,6 +240,7 @@ func (client *VKClient) MessagesSend(peerOrDomain interface{}, message string, p
 	return resp, nil
 }
 
+// MessagesDelete удаляет сообщение.
 func (client *VKClient) MessagesDelete(ids []int, spam int, deleteForAll int) (int, error) {
 	params := url.Values{}
 	s := ArrayToStr(ids)
@@ -250,6 +270,7 @@ func (client *VKClient) MessagesDelete(ids []int, spam int, deleteForAll int) (i
 	return delCount, nil
 }
 
+// MessagesSetActivity изменяет статус набора текста пользователем в диалоге.
 func (client *VKClient) MessagesSetActivity(user int, params url.Values) error {
 	if params == nil {
 		params = url.Values{}

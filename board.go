@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+// Методы для работы с обсуждениями
+
 type Topic struct {
 	ID           int    `json:"id"`
 	Title        string `json:"title"`

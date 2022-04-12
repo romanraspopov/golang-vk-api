@@ -6,9 +6,11 @@ import (
 	"strconv"
 )
 
+// Методы для работы с сообществами
+
 var (
 	groupFields = "description,age_limits,activity,can_create_topic," +
-		"can_message,can_post,can_see_all_posts,contacts,has_photo," +
+		"can_message,can_post,can_see_all_posts,city,contacts,has_photo," +
 		"is_messages_blocked"
 )
 
@@ -34,6 +36,7 @@ type Group struct {
 	CanMessage        int             `json:"can_message"`
 	CanPost           int             `json:"can_post"`
 	CanSeeAllPosts    int             `json:"can_see_all_posts"`
+	City              *UserCity       `json:"city"`
 }
 
 type GroupSearchResult struct {
@@ -51,6 +54,7 @@ type GroupMembers struct {
 	Members []*User `json:"items"`
 }
 
+// GroupSendInvite позволяет приглашать друзей в группу.
 func (client *VKClient) GroupSendInvite(groupID int, userID int) error {
 	params := url.Values{}
 	params.Set("group_id", strconv.Itoa(groupID))
@@ -63,6 +67,7 @@ func (client *VKClient) GroupSendInvite(groupID int, userID int) error {
 	return nil
 }
 
+// GroupSearch осуществляет поиск сообществ по заданной подстроке.
 func (client *VKClient) GroupSearch(query string, count int) (int, []*Group, error) {
 	params := url.Values{}
 	params.Set("q", query)
@@ -78,11 +83,13 @@ func (client *VKClient) GroupSearch(query string, count int) (int, []*Group, err
 	return res.Count, res.Groups, nil
 }
 
+// GroupGet возвращает список сообществ указанного пользователя.
 func (client *VKClient) GroupGet(userID int, count int) (int, []*Group, error) {
 	params := url.Values{}
 	params.Set("user_id", strconv.Itoa(userID))
 	params.Set("count", strconv.Itoa(count))
 	params.Set("extended", "1")
+	params.Set("fields", groupFields)
 	resp, err := client.MakeRequest("groups.get", params)
 	if err != nil {
 		return 0, nil, err
@@ -93,6 +100,7 @@ func (client *VKClient) GroupGet(userID int, count int) (int, []*Group, error) {
 	return res.Count, res.Groups, nil
 }
 
+// GroupsGetByID возвращает информацию о заданном сообществе или о нескольких сообществах.
 func (client *VKClient) GroupsGetByID(groupsID []int) ([]*Group, error) {
 	params := url.Values{}
 	params.Set("group_ids", ArrayToStr(groupsID))
@@ -109,6 +117,7 @@ func (client *VKClient) GroupsGetByID(groupsID []int) ([]*Group, error) {
 	return groupsList, nil
 }
 
+// GroupGetMembers возвращает список участников сообщества.
 func (client *VKClient) GroupGetMembers(group_id, count, offset int) (int, []*User, error) {
 	params := url.Values{}
 	params.Set("group_id", strconv.Itoa(group_id))

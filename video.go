@@ -6,6 +6,8 @@ import (
 	"strconv"
 )
 
+// Методы для работы с видеозаписями
+
 type VideoImage struct {
 	Url         string `json:"url"`
 	Width       int    `json:"width"`

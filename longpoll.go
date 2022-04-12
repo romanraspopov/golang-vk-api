@@ -12,6 +12,18 @@ import (
 	"time"
 )
 
+// Long Polling — это технология, которая позволяет получать данные о новых событиях с помощью «длинных запросов».
+// Сервер получает запрос, но отправляет ответ на него не сразу, а лишь тогда,
+// когда произойдет какое-либо событие (например, придёт новое сообщение), либо истечет заданное время ожидания.
+// https://vk.com/dev.php?method=using_longpoll
+//
+// Bots Long Poll API позволяет работать с событиями из Вашего сообщества в режиме реального времени.
+// В отличие от Callback API, очередь из событий хранится на стороне ВКонтакте
+// — мы не будем присылать отдельное уведомление для каждого события.
+// В противоположность User Long Poll, Bots Long Poll API работает с событиями сообщества, а не пользователя.
+// Используя этот подход, Вы можете мгновенно отображать в своем приложении важные события.
+// https://vk.com/dev/bots_longpoll
+
 type LongPollServer struct {
 	Key    string `json:"key"`
 	Server string `json:"server"`
@@ -54,11 +66,11 @@ type BotsLongPollEvent struct {
 
 type BotsLongPollObject struct {
 	// message_*
-	Message    BotlLongPollDM 			`json:"message"`
-	ClientInfo interface{}    			`json:"client_info"`
+	Message    BotlLongPollDM `json:"message"`
+	ClientInfo interface{}    `json:"client_info"`
 	// group_join
-	UserId	   int64					`json:"user_id"`
-	JoinType   string					`json:"join_type"`
+	UserId   int64  `json:"user_id"`
+	JoinType string `json:"join_type"`
 	// wall_post_new
 	WallPost
 }

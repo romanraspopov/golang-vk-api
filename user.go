@@ -5,6 +5,8 @@ import (
 	"net/url"
 )
 
+// Методы для работы с данными пользователей
+
 // last seen device
 const (
 	_ = iota
@@ -24,6 +26,7 @@ var (
 		"can_write_private_message,can_see_all_posts,can_post,universities"
 )
 
+// User содержит все личные данные пользователя ВК
 type User struct {
 	UID                     int          `json:"id"`
 	FirstName               string       `json:"first_name"`
@@ -52,21 +55,25 @@ type User struct {
 	Relation                int          `json:"relation"`
 }
 
+// UserCity содержит id и название населенного пункта пользователя ВК
 type UserCity struct {
 	ID    int    `json:"id"`
 	Title string `json:"title"`
 }
 
+// UserCountry содержит id и название страны пользователя ВК
 type UserCountry struct {
 	ID    int    `json:"id"`
 	Title string `json:"title"`
 }
 
+// LastSeen содержит информацию о последнем посещении пользователя (время и тип устройства)
 type LastSeen struct {
 	Time     int64 `json:"time"`
 	Platform int   `json:"platform"`
 }
 
+// OnlineInfo содержит информацию о статусе "онлайн" пользователя
 type OnlineInfo struct {
 	Visible  bool  `json:"visible"`
 	LastSeen int64 `json:"last_seen"`

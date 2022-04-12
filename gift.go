@@ -6,6 +6,8 @@ import (
 	"strconv"
 )
 
+// Методы для работы с подарками
+
 type Gift struct {
 	Count int         `json:"count"`
 	Gifts []*GiftItem `json:"items"`
