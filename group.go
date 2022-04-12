@@ -10,7 +10,7 @@ import (
 
 var (
 	groupFields = "description,age_limits,activity,can_create_topic," +
-		"can_message,can_post,can_see_all_posts,contacts,has_photo," +
+		"can_message,can_post,can_see_all_posts,city,contacts,has_photo," +
 		"is_messages_blocked"
 )
 
