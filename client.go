@@ -146,7 +146,7 @@ func NewVKGroupBot(token string, options *TokenOptions, limitrate bool) (*VKGrou
 }
 
 func (client *VKClient) updateSelfUser() error {
-	me, err := client.UsersGet([]int{client.Self.UID})
+	me, err := client.UsersGet([]int{client.Self.UID}, userFields)
 	if err != nil {
 		return err
 	}

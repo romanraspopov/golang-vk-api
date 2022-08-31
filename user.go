@@ -26,7 +26,7 @@ var (
 		"can_write_private_message,can_see_all_posts,can_post,universities"
 )
 
-// User содержит все личные данные пользователя ВК
+// User содержит все (ли?) личные данные пользователя ВК
 type User struct {
 	UID                     int          `json:"id"`
 	FirstName               string       `json:"first_name"`
@@ -79,11 +79,15 @@ type OnlineInfo struct {
 	LastSeen int64 `json:"last_seen"`
 }
 
-func (client *VKClient) UsersGet(users []int) ([]*User, error) {
-	idsString := ArrayToStr(users)
+func (client *VKClient) UsersGet(users []int, fields string) ([]*User, error) {
+	userIds := ArrayToStr(users)
 	v := url.Values{}
-	v.Add("user_ids", idsString)
-	v.Add("fields", userFields)
+	v.Add("user_ids", userIds)
+	if fields != "" {
+		v.Add("fields", fields)
+	} else {
+		v.Add("fields", userFields)
+	}
 
 	resp, err := client.MakeRequest("users.get", v)
 	if err != nil {
@@ -95,3 +99,20 @@ func (client *VKClient) UsersGet(users []int) ([]*User, error) {
 
 	return userList, nil
 }
+
+// func (client *VKClient) UsersGet(users []int) ([]*User, error) {
+// 	idsString := ArrayToStr(users)
+// 	v := url.Values{}
+// 	v.Add("user_ids", idsString)
+// 	v.Add("fields", userFields)
+
+// 	resp, err := client.MakeRequest("users.get", v)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	var userList []*User
+// 	json.Unmarshal(resp.Response, &userList)
+
+// 	return userList, nil
+// }
