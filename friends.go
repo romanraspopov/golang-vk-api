@@ -73,11 +73,13 @@ type FriendDeleteResult struct {
 // Результат. После успешного выполнения возвращает список идентификаторов (id) друзей пользователя,
 // если параметр fields не использовался.
 // При использовании параметра fields  возвращает список объектов пользователей, но не более 5000.
-func (client *VKClient) FriendsGet(uid int, count int) (int, []*User, error) {
+func (client *VKClient) FriendsGet(uid int, count int, fields string) (int, []*User, error) {
 	params := url.Values{}
 	params.Set("user_id", strconv.Itoa(uid))
 	params.Set("count", strconv.Itoa(count))
-	params.Set("fields", userFields)
+	if fields != "" {
+		params.Set("fields", fields)
+	}
 
 	resp, err := client.MakeRequest("friends.get", params)
 	if err != nil {
