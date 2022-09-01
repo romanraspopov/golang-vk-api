@@ -55,7 +55,8 @@ type FriendDeleteResult struct {
 // (работает только при переданном параметре fields).
 // По умолчанию список сортируется в порядке возрастания идентификаторов пользователей.
 //
-// count (positive) - Количество друзей, которое нужно вернуть.
+// count (positive) - Количество друзей, которое нужно вернуть. 0 - вернуть всех друзей.
+// При использовании параметра fields возвращается не более 5000 друзей.
 //
 // offset (positive) - Смещение, необходимое для выборки определенного подмножества друзей.
 //
@@ -72,11 +73,12 @@ type FriendDeleteResult struct {
 //
 // Результат. После успешного выполнения возвращает список идентификаторов (id) друзей пользователя,
 // если параметр fields не использовался.
-// При использовании параметра fields  возвращает список объектов пользователей, но не более 5000.
-func (client *VKClient) FriendsGet(uid int, count int, fields string) (int, []*User, error) {
+// При использовании параметра fields возвращает список объектов пользователей, но не более 5000.
+func (client *VKClient) FriendsGet(uid int, count int, offset int, fields string) (int, []*User, error) {
 	params := url.Values{}
 	params.Set("user_id", strconv.Itoa(uid))
 	params.Set("count", strconv.Itoa(count))
+	params.Set("offset", strconv.Itoa(offset))
 	if fields != "" {
 		params.Set("fields", fields)
 	}
