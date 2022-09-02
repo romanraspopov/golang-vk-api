@@ -18,6 +18,11 @@ type Friends struct {
 	Users []*User `json:"items"`
 }
 
+type FriendsIds struct {
+	Count   int   `json:"count"`
+	UserIds []int `json:"items"`
+}
+
 type Request struct {
 	UserID        int     `json:"user_id"`
 	MutualFriends *Mutual `json:"mutual"`
@@ -36,7 +41,7 @@ type FriendDeleteResult struct {
 	Suggestion_deleted  int `json:"suggestion_deleted"`  // отклонена рекомендация друга.
 }
 
-// FriendsGet возвращает список идентификаторов друзей пользователя
+// FriendsGet возвращает список идентификаторов друзей пользователя (см. FriendsGetIds)
 // или расширенную информацию о друзьях пользователя (при использовании параметра fields).
 //
 // Если вы используете социальный граф пользователя ВКонтакте в своём приложении,
@@ -91,6 +96,29 @@ func (client *VKClient) FriendsGet(uid int, count int, offset int, fields string
 	var friends *Friends
 	json.Unmarshal(resp.Response, &friends)
 	return friends.Count, friends.Users, nil
+}
+
+// FriendsGetIds возвращает только список идентификаторов всех друзей пользователя.
+// или расширенную информацию о друзьях пользователя (при использовании параметра fields).
+//
+// Если вы используете социальный граф пользователя ВКонтакте в своём приложении,
+// обратите внимание на п. 4.4. Правил платформы (https://dev.vk.com/rules)
+//
+// user_id (integer) - Идентификатор пользователя, для которого необходимо получить список друзей.
+// Если параметр не задан, то считается, что он равен идентификатору текущего пользователя
+// (справедливо для вызова с передачей access_token).
+func (client *VKClient) FriendsGetIds(uid int) (count int, userIds []int, err error) {
+	params := url.Values{}
+	params.Set("user_id", strconv.Itoa(uid))
+
+	resp, err := client.MakeRequest("friends.get", params)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	var friendsIds *FriendsIds
+	json.Unmarshal(resp.Response, &friendsIds)
+	return friendsIds.Count, friendsIds.UserIds, nil
 }
 
 // FriendsGetRequests возвращает информацию о полученных или отправленных заявках на добавление в друзья для текущего пользователя.
